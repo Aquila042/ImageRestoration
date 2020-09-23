@@ -54,3 +54,16 @@ def saveImage(array, filename):
     else:
         raise ValueError("Invalid array dimensions in saveImage")
 
+def makeMask(imagePath):
+	image = loadImage(imagePath)
+	maskIndex = []#Saves the siteIndex of the mask
+	
+	for n in range(len(image)):
+		for m in range(len(image[0])):
+			if image[n][m] < 10:
+				image[n][m] = 0
+				maskIndex.append(n*len(image[n]) + m)
+			else:
+				image[n][m] = 255
+	
+	return(image, maskIndex)
