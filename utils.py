@@ -67,3 +67,38 @@ def makeMask(imagePath):
 				image[n][m] = 255
 	
 	return(image, maskIndex)
+    
+
+def IndexFlip(indexIn, rowLen):
+    """
+    Converts between site and pixel coordinate index
+    site index must be a integer
+    """
+    if type(indexIn) == int:
+        cordX = int(indexIn % rowLen)
+        cordY = int((indexIn - cordX)/rowLen)
+        return (cordX, cordY)
+    elif len(indexIn) == 2:
+        return int(indexIn[1]*rowLen + indexIn[0])
+    else:
+        raise ValueError("index is of wrong type")
+#int((intSites[intIndex] + x) % len(image[0]))
+        
+
+def discrepancyScore(image, restored, ActiveSites):
+    missingOrig = []
+    restoredValues = []
+    for site in ActiveSites:
+        cord = IndexFlip(site, len(image[0]))
+        missingOrig.append(image[cord[0]][cord[1]])
+        restoredValues.append(restored[cord[0]][cord[1]])
+    
+    meanI = sum(missingOrig)/len(missingOrig)
+    sigma2 = 1/(len(ActiveSites) - 1)*sum([(I - meanI)**2 for I in restoredValues])
+    chi2 = 0
+    for n in range(len(restoredValues)):
+        chi2 =+ 1/len(restoredValues) * (restoredValues[n] - missingOrig[n])**2
+    chi2 = chi2/sigma2
+    return chi2
+        
+        
