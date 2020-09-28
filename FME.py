@@ -7,9 +7,6 @@ mask = loadImage("masks/128/circles.png")
 
 originalimage = np.copy(image)
 
-height = 128
-width = 128
-
 def isMasked(mask, x ,y):
     if mask[y][x] == 0:
         return True
@@ -25,34 +22,22 @@ def manhattanDistance(x1, y1, x2, y2):
 
 def FEMLaplace(_image, _mask):
 
-    #copy the image
+    #Copy the image
     newimage = np.copy(_image)
+
+    width = newimage.shape[0]
+    height = newimage.shape[1]
+
+    print(width)
+    print(height)
 
     #Site indexing
     siteindex = []
 
-    for y in range(0,128):
-        for x in range(0,128):
+    for y in range(0,height):
+        for x in range(0,width):
             interesting = False
-
-            '''
-            if isWithinBounds(x-1,y-1):
-                if isMasked(x-1,y-1):
-                    interesting = True
-            if isWithinBounds(x+1,y-1):
-                        if isMasked(x+1,y-1):
-                            interesting = True
-            if isWithinBounds(x-1,y+1):
-                        if isMasked(x-1,y+1):
-                            interesting = True
-            if isWithinBounds(x+1,y+1):
-                        if isMasked(x+1,y+1):
-                            interesting = True
-
-            if isMasked(x,y):
-                interesting = True
-            '''
-
+            
             if isMasked(_mask, x, y):
                 siteindex.append((x, y))
 
