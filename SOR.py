@@ -10,11 +10,11 @@ import numpy as np
 from random import randint
 def SOR(maskIndex, neighbours,n,omega): 
     iterations=np.linspace(1,n,n)
-    maximumIndex=maskIndex[-1]+1
-    restored=np.zeros(maximumIndex)# restored consists of index for the interior point restored and the second list is the values for these points
+    maximumIndex=len(maskIndex)
+    restored=np.zeros(maximumIndex) # restored consists of index for the interior point restored and the second list is the values for these points
     rho=0.9
     h=1/n
-    for a in maskIndex:     #assigning random values
+    for a in range(len(maskIndex)):     #assigning random values
         restored[a]=randint(1,255)
         
         
@@ -22,20 +22,19 @@ def SOR(maskIndex, neighbours,n,omega):
 # it simply uses the values from the restored list which are initialised and then updated.
 
     
-    for i in iterations:
-        c=0
-        for t in maskIndex:
-            if len(neighbours[c][0]) > 3:
-                restored[t]=(1-omega)*(restored[t])*(omega/4)*((restored[(neighbours[c][0][0])])+(restored[(neighbours[c][0][1])])+(restored[(neighbours[c][0][2])])+(restored[(neighbours[c][0][3])])-rho*h**2)                
-            elif len(neighbours[c][0]) > 2: 
-                restored[t]=(1-omega)*(restored[t])*(omega/4)*((restored[(neighbours[c][0][0])])+(restored[(neighbours[c][0][1])])+(restored[(neighbours[c][0][2])])+sum(neighbours[c][1])-rho*h**2)            
-            elif len(neighbours[c][0]) > 1: 
-                restored[t]=(1-omega)*(restored[t])*(omega/4)*((restored[(neighbours[c][0][0])])+(restored[(neighbours[c][0][1])])+sum(neighbours[c][1])-rho*h**2)            
-            elif len(neighbours[c][0]) > 0:
-                restored[t]=(1-omega)*(restored[t])*(omega/4)*((restored[(neighbours[c][0][0])])+sum(neighbours[c][1])-rho*h**2)
+    for i in iterations:  
+        for t in range(len(maskIndex)):
+            if len(neighbours[t][0]) > 3:
+                restored[t]=(1-omega)*(restored[t])*(omega/4)*((restored[(neighbours[t][0][0])])+(restored[(neighbours[t][0][1])])+(restored[(neighbours[t][0][2])])+(restored[(neighbours[t][0][3])])-rho*h**2)                
+            elif len(neighbours[t][0]) > 2: 
+                restored[t]=(1-omega)*(restored[t])*(omega/3)*((restored[(neighbours[t][0][0])])+(restored[(neighbours[t][0][1])])+(restored[(neighbours[t][0][2])])+sum(neighbours[t][1])-rho*h**2)            
+            elif len(neighbours[t][0]) > 1: 
+                restored[t]=(1-omega)*(restored[t])*(omega/2)*((restored[(neighbours[t][0][0])])+(restored[(neighbours[t][0][1])])+sum(neighbours[t][1])-rho*h**2)            
+            elif len(neighbours[t][0]) > 0:
+                restored[t]=(1-omega)*(restored[t])*(omega/1)*((restored[(neighbours[t][0][0])])+sum(neighbours[t][1])-rho*h**2)
             else:
-                restored[t]=(1-omega)*(restored[t])*(omega/4)*(sum(neighbours[c][1])-rho*h**2)
-            c=c+1
+                break
+                
  #   restored = [x for x in restored if x !=0]# this is merely used for a check and should be removed later.
     return restored 
 
