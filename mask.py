@@ -15,7 +15,7 @@ def findNeighbours(image, intSites):
         neighbours.append([[],[]])
         for x in [1 ,-1, len(image), -len(image)]:    #right, left, botom and top neigbours in site notation
             if (intSites[intIndex] + x) in intSites:   #check if neigbour is interor or a boundary
-                neighbours[-1][0].append(intIndex + x)
+                neighbours[-1][0].append(intSites.index(intSites[intIndex]+x))
             else:
                 cordx = int((intSites[intIndex] + x) % len(image[0]))
                 cordy = int((intSites[intIndex] + x - cordx)/len(image[0]))
