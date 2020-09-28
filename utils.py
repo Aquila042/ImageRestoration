@@ -74,7 +74,7 @@ def IndexFlip(indexIn, rowLen):
     Converts between site and pixel coordinate index
     site index must be a integer
     """
-    if type(indexIn) == int:
+    if type(indexIn) == int or type(indexIn) == np.float64:
         cordX = int(indexIn % rowLen)
         cordY = int((indexIn - cordX)/rowLen)
         return (cordX, cordY)
