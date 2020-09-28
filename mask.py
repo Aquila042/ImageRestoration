@@ -10,14 +10,15 @@ def findNeighbours(image, intSites):
     
     return = [[[site index 1, site index 2],[boundary value 1, boundary value 2]], ...]
     """
-    neigbours = []
+    neighbours = []
     for intIndex in range(len(intSites)):#for each interior point
-        neigbours.append([[],[]])
+        neighbours.append([[],[]])
         for x in [1 ,-1, len(image), -len(image)]:    #right, left, botom and top neigbours in site notation
             if (intSites[intIndex] + x) in intSites:   #check if neigbour is interor or a boundary
-                neigbours[-1][0].append(intIndex + x)
+                neighbours[-1][0].append(intIndex + x)
             else:
                 cordx = int((intSites[intIndex] + x) % len(image[0]))
                 cordy = int((intSites[intIndex] + x - cordx)/len(image[0]))
-                neigbours[-1][1].append(image[cordy][cordx])
-    return(neigbours)
+                neighbours[-1][1].append(image[cordy][cordx])
+    return(neighbours)
+
