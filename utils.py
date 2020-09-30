@@ -55,18 +55,22 @@ def saveImage(array, filename):
         raise ValueError("Invalid array dimensions in saveImage")
 
 def makeMask(imagePath):
-	image = loadImage(imagePath)
-	maskIndex = []#Saves the siteIndex of the mask
-	
-	for n in range(len(image)):
-		for m in range(len(image[0])):
-			if image[n][m] < 10:
-				image[n][m] = 0
-				maskIndex.append(n*len(image[n]) + m)
-			else:
-				image[n][m] = 255
-	
-	return(image, maskIndex)
+    """
+    Takes a black and white image (grey scale tecnicaly works)
+    and return a strictly black and white mask and a list of
+    site index for all maked pixels.
+    """
+    image = loadImage(imagePath)
+    maskIndex = []#Saves the siteIndex of the mask
+    
+    for n in range(len(image)):
+        for m in range(len(image[0])):
+            if image[n][m] < 10:
+                image[n][m] = 0
+                maskIndex.append(n*len(image[n]) + m)
+            else:
+                image[n][m] = 255	
+    return(image, maskIndex)
     
 
 def IndexFlip(indexIn, rowLen):
@@ -86,6 +90,10 @@ def IndexFlip(indexIn, rowLen):
         
 
 def discrepancyScore(imageIn, restoredIn, ActiveSites):
+    """
+    imageIn needs to be the original unmasked image.
+    ActiveSites is the site index list given by makeMask
+    """
     image = np.copy(imageIn).astype(np.float64)
     restored = np.copy(restoredIn).astype(np.float64)#preventing overflows
     
@@ -104,4 +112,26 @@ def discrepancyScore(imageIn, restoredIn, ActiveSites):
     chi2 = 1/n * chi2/sigma2
     return chi2
         
-        
+#create list of interior point neigbours [[[intPointIndex],[DB values]],...]
+def findNeighbours(image, intSites):
+    """ 
+    takes image as array and a list of the site index for each interior point
+    
+    Returns a list where each entry contains the information of each neigbour to the coresponding site in intSites
+    neigbours are seperated into two lists, interior and boudary
+    the indecies for the relevant interior point in intSites is saved in the first list
+    the values for the relevant boundary points are saved in the second list
+    
+    return = [[[site index 1, site index 2],[boundary value 1, boundary value 2]], ...]
+    """
+    neighbours = []
+    for intIndex in range(len(intSites)):#for each interior point
+        neighbours.append([[],[]])
+        for x in [1 ,-1, len(image), -len(image)]:    #right, left, botom and top neigbours in site notation
+            if (intSites[intIndex] + x) in intSites:   #check if neigbour is interor or a boundary
+                neighbours[-1][0].append(intSites.index(intSites[intIndex]+x))
+            else:
+                cordx = int((intSites[intIndex] + x) % len(image[0]))
+                cordy = int((intSites[intIndex] + x - cordx)/len(image[0]))
+                neighbours[-1][1].append(image[cordy][cordx])
+    return(neighbours)        
