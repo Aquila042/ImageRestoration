@@ -90,8 +90,8 @@ def discrepancyScore(image, restored, ActiveSites):
     restoredValues = []
     for site in ActiveSites:
         cord = IndexFlip(site, len(image[0]))
-        missingOrig.append(image[cord[0]][cord[1]])
-        restoredValues.append(restored[cord[0]][cord[1]])
+        missingOrig.append(image[cord[1]][cord[0]])
+        restoredValues.append(restored[cord[1]][cord[0]])
     
     meanI = sum(missingOrig)/len(missingOrig)
     sigma2 = 1/(len(ActiveSites) - 1)*sum([(I - meanI)**2 for I in restoredValues])
