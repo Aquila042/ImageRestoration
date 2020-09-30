@@ -12,12 +12,14 @@ def g(norm_laplacian_squared):
 #def g(x):
 #    return 1/(1+x/(K**2))**2
 
-#Initial function
+#Specify images here
+
 image = loadImage("pictures/128/001.jpeg").astype(np.float64)
 mask = loadImage("masks/128/circles.png").astype(np.float64)
 
 u0 = np.zeros((image.shape[0],image.shape[1]))
 
+#Use the Laplace inpainted image as an initial guess
 laplacerestored = FEMLaplace(image, mask)
 
 for x in range(0,image.shape[1]):
@@ -74,18 +76,19 @@ u = u0
 
 showImage(u)
 
-#ten seconds with N steps
+#Time iterations
 N = 100
 
 for k in range(0,N):
     #if k % 20 == 0:
         #showImage(u)
 
+    #here dt is specified
     u = iteration(u,0.05)
 
 showImage(u)
 
-#Restore surrounding pixels?
+#Restore surrounding pixels
 for x in range(0, image.shape[1]):
     for y in range(0, image.shape[0]):
         if mask[y][x] > 128:
