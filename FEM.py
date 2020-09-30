@@ -1,11 +1,11 @@
 import numpy as np
 from utils import loadImage, saveImage, showImage, discrepancyScore
 
-image = loadImage("pictures/128/005.jpeg", greyscale=False)
+#image = loadImage("pictures/128/005.jpeg", greyscale=False)
 
-mask = loadImage("masks/128/circles.png")
+#mask = loadImage("masks/128/circles.png")
 
-originalimage = np.copy(image)
+#originalimage = np.copy(image)
 
 def isMasked(mask, x ,y):
     if mask[y][x] == 0:
@@ -63,24 +63,24 @@ def FEMLaplace(_image, _mask):
 
         x,y = siteindex[k][0],siteindex[k][1]
 
-        if not isMasked(mask, x-1,y-1):
+        if not isMasked(_mask, x-1,y-1):
             diagonalsum += newimage[y-1][x-1]
-        if not isMasked(mask, x-1,y+1):
+        if not isMasked(_mask, x-1,y+1):
             diagonalsum += newimage[y+1][x-1]
-        if not isMasked(mask, x+1,y-1):
+        if not isMasked(_mask, x+1,y-1):
             diagonalsum += newimage[y-1][x+1]
-        if not isMasked(mask, x+1,y+1):
+        if not isMasked(_mask, x+1,y+1):
             diagonalsum += newimage[y+1][x+1]
 
         adjacentsum = 0
 
-        if not isMasked(mask, x,y+1):
+        if not isMasked(_mask, x,y+1):
             adjacentsum += newimage[y+1][x]
-        if not isMasked(mask, x,y-1):
+        if not isMasked(_mask, x,y-1):
             adjacentsum += newimage[y-1][x]
-        if not isMasked(mask, x+1,y):
+        if not isMasked(_mask, x+1,y):
             adjacentsum += newimage[y][x+1]
-        if not isMasked(mask, x-1,y):
+        if not isMasked(_mask, x-1,y):
             adjacentsum += newimage[y][x-1]
 
         f[k][0] = -(diagonalsum*b+adjacentsum*2*a)
@@ -94,19 +94,19 @@ def FEMLaplace(_image, _mask):
 
     return newimage
 
-restoredimageR = FEMLaplace(image[:,:,0], mask)
-restoredimageG = FEMLaplace(image[:,:,1], mask)
-restoredimageB = FEMLaplace(image[:,:,2], mask)
+#restoredimageR = FEMLaplace(image[:,:,0], mask)
+#restoredimageG = FEMLaplace(image[:,:,1], mask)
+#restoredimageB = FEMLaplace(image[:,:,2], mask)
 
-restoredimage = np.dstack([restoredimageR,restoredimageG,restoredimageB])
+#restoredimage = np.dstack([restoredimageR,restoredimageG,restoredimageB])
 
-showImage(np.concatenate([originalimage,np.dstack([mask,mask,mask]).astype(np.uint8),restoredimage],axis=1))
+#showImage(np.concatenate([originalimage,np.dstack([mask,mask,mask]).astype(np.uint8),restoredimage],axis=1))
 
-scoreR = discrepancyScore(originalimage[:,:,0], restoredimageR, mask[1])
-scoreG = discrepancyScore(originalimage[:,:,1], restoredimageG, mask[1])
-scoreB = discrepancyScore(originalimage[:,:,2], restoredimageB, mask[1])
+#scoreR = discrepancyScore(originalimage[:,:,0], restoredimageR, mask[1])
+#scoreG = discrepancyScore(originalimage[:,:,1], restoredimageG, mask[1])
+#scoreB = discrepancyScore(originalimage[:,:,2], restoredimageB, mask[1])
 
-scoreTot = (scoreR + scoreG + scoreB)/3
-print("Average discrepancy score = " + str(scoreTot))
+#scoreTot = (scoreR + scoreG + scoreB)/3
+#print("Average discrepancy score = " + str(scoreTot))
 
 

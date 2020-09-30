@@ -1,26 +1,29 @@
 from utils import loadImage, showImage
+from FEM import FEMLaplace
 import numpy as np
 
 #Diffusivity constant
 K = 1
 
 #Diffusivity function
-#def g(norm_laplacian_squared):
-#    return np.exp(-norm_laplacian_squared/(K**2))
+def g(norm_laplacian_squared):
+    return 2*np.exp(-norm_laplacian_squared/(K**2))
 
-def g(x):
-    return 1/(1+x/(K**2))**2
+#def g(x):
+#    return 1/(1+x/(K**2))**2
 
 #Initial function
-image = loadImage("pictures/32/discretegradient.png").astype(np.float64)
-mask = loadImage("masks/32/smallsquares.png").astype(np.float64)
+image = loadImage("pictures/128/001.jpeg").astype(np.float64)
+mask = loadImage("masks/128/circles.png").astype(np.float64)
 
 u0 = np.zeros((image.shape[0],image.shape[1]))
+
+laplacerestored = FEMLaplace(image, mask)
 
 for x in range(0,image.shape[1]):
     for y in range(0,image.shape[0]):
         if mask[y][x] < 128:
-            u0[y][x] = np.random.randint(255)
+            u0[y][x] = laplacerestored[y][x] 
         else:
             u0[y][x] = image[y][x]
 
@@ -48,33 +51,6 @@ def g_matrix(u):
     
     return G
 
-'''
-G0 = g_matrix(u0)
-
-showImage(G0)
-
-dt = 0.1
-
-u1 = np.copy(u0)
-
-for x in range(0, image.shape[1]):
-    for y in range(0, image.shape[0]):
-        u1[y][x] += dt*((get_u(G0,x+1,y)+get_u(G0,x,y))/2*(get_u(u0,x+1,y)-get_u(u0,x,y))
-                -(get_u(G0,x,y)+get_u(G0,x-1,y)/2*(get_u(u0,x,y)-get_u(u0,x-1,y)))
-                +(get_u(G0,x,y+1)+get_u(G0,x,y))/2*(get_u(u0,x,y+1)-get_u(u0,x,y))
-                -((get_u(G0,x,y)+get_u(G0,x,y-1))/2*(get_u(u0,x,y)-get_u(u0,x,y-1))))
-
-showImage(u1)
-
-#Restore surrounding pixels?
-for x in range(0, image.shape[1]):
-    for y in range(0, image.shape[0]):
-        if mask[y][x] > 128:
-            u1[y][x] = image[y][x]
-
-showImage(u1)
-'''
-
 def iteration(un, dt):
     G = g_matrix(un)
 
@@ -89,29 +65,30 @@ def iteration(un, dt):
             unext[y][x] = np.clip(unext[y][x],0,255)
     
     #Restore surrounding pixels?
-    '''
     for x in range(0, image.shape[1]):
         for y in range(0, image.shape[0]):
             if mask[y][x] > 128:
                 unext[y][x] = image[y][x]
-    '''    
     return unext
 u = u0
 
 showImage(u)
 
 #ten seconds with N steps
-N = 20
+N = 100
 
 for k in range(0,N):
     #if k % 20 == 0:
         #showImage(u)
 
-    u = iteration(u,0.25)
+    u = iteration(u,0.05)
+
 showImage(u)
+
 #Restore surrounding pixels?
 for x in range(0, image.shape[1]):
     for y in range(0, image.shape[0]):
         if mask[y][x] > 128:
             u[y][x] = image[y][x]
+
 showImage(u)
