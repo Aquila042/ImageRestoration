@@ -9,7 +9,9 @@ Takes the mask indicies and values from neighbours and returns a list consisting
 import numpy as np
 from random import randint
 from utils import IndexFlip
-def SOR(maskIndex, neighbours,n,omega): 
+def SOR(maskIndex, neighbours,n,omega):
+#    maskIndex = copy.deepcopy(maskIndexIn)
+#    neighbours = copy.deepcopy(neighboursIn)
     maximumIndex=(maskIndex[-1]+1)
     restored=np.zeros(maximumIndex) # restored consists of index for the interior point restored and the second list is the values for these points
     for a in range(len(maskIndex)):     #assigning random values
@@ -32,7 +34,10 @@ def SOR(maskIndex, neighbours,n,omega):
           
     return restored 
 
-def RestoreIndex(imageMatrix,restored,maskIndex):
+def RestoreIndex(imageMatrixIn,restoredIn,maskIndex):
+    imageMatrix = np.copy(imageMatrixIn)
+    restored = np.copy(restoredIn)
+#    maskIndex = copy.deepcopy(maskIndexIn)
     a=0
     for i in maskIndex:
         coord = IndexFlip(i, len(imageMatrix[0]))

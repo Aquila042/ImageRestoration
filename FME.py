@@ -1,5 +1,5 @@
 import numpy as np
-from utils import loadImage, saveImage, showImage, discrepancyScore
+from utils import loadImage, saveImage, showImage, discrepancyScore, makeMask
 
 image = loadImage("pictures/128/005.jpeg", greyscale=False)
 
@@ -102,9 +102,10 @@ restoredimage = np.dstack([restoredimageR,restoredimageG,restoredimageB])
 
 showImage(np.concatenate([originalimage,np.dstack([mask,mask,mask]).astype(np.uint8),restoredimage],axis=1))
 
-scoreR = discrepancyScore(originalimage[:,:,0], restoredimageR, mask[1])
-scoreG = discrepancyScore(originalimage[:,:,1], restoredimageG, mask[1])
-scoreB = discrepancyScore(originalimage[:,:,2], restoredimageB, mask[1])
+DSMask = makeMask("masks/128/circles.png") #Need the mask site index list
+scoreR = discrepancyScore(originalimage[:,:,0], restoredimageR, DSMask[1])
+scoreG = discrepancyScore(originalimage[:,:,1], restoredimageG, DSMask[1])
+scoreB = discrepancyScore(originalimage[:,:,2], restoredimageB, DSMask[1])
 
 scoreTot = (scoreR + scoreG + scoreB)/3
 print("Average discrepancy score = " + str(scoreTot))

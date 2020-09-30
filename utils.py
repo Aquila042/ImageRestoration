@@ -85,20 +85,23 @@ def IndexFlip(indexIn, rowLen):
 #int((intSites[intIndex] + x) % len(image[0]))
         
 
-def discrepancyScore(image, restored, ActiveSites):
+def discrepancyScore(imageIn, restoredIn, ActiveSites):
+    image = np.copy(imageIn).astype(np.float64)
+    restored = np.copy(restoredIn).astype(np.float64)#preventing overflows
+    
     missingOrig = []
     restoredValues = []
     for site in ActiveSites:
         cord = IndexFlip(site, len(image[0]))
         missingOrig.append(image[cord[1]][cord[0]])
         restoredValues.append(restored[cord[1]][cord[0]])
-    
-    meanI = sum(missingOrig)/len(missingOrig)
-    sigma2 = 1/(len(ActiveSites) - 1)*sum([(I - meanI)**2 for I in restoredValues])
+    n = len(ActiveSites)
+    meanI = sum(missingOrig)/n
+    sigma2 = 1/(n - 1)*sum([(I - meanI)**2 for I in restoredValues])
     chi2 = 0
     for n in range(len(restoredValues)):
-        chi2 =+ 1/len(restoredValues) * (restoredValues[n] - missingOrig[n])**2
-    chi2 = chi2/sigma2
+        chi2 =+ (restoredValues[n] - missingOrig[n])**2
+    chi2 = 1/n * chi2/sigma2
     return chi2
         
         
